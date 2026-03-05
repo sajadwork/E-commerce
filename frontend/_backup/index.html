@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stuffus | Modern E-commerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Using a CDN for icons (Phosphor Icons or FontAwesome could work, using Phosphor for modern look) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <span class="brand-name">Stuffus</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Beranda</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Blog</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button class="icon-btn"><i class="ph ph-magnifying-glass"></i></button>
+                <button class="icon-btn"><i class="ph ph-heart"></i></button>
+                <button class="icon-btn"><i class="ph ph-shopping-cart"></i></button>
+                <div class="user-avatar">
+                    <img src="https://i.pravatar.cc/150?u=stuffus" alt="User Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-bg" style="background-image: url('images/hero_background.png');"></div>
+        <div class="hero-overlay-text">Shop</div>
+        <div class="container hero-content">
+            <h1 class="hero-title">Give All You Need</h1>
+            <div class="hero-search">
+                <input type="text" placeholder="Search on Stuffus">
+                <button class="search-btn">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container main-layout">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="category-card">
+                <h3>Category</h3>
+                <ul class="category-list">
+                    <li class="active">
+                        <span class="cat-icon"><i class="ph ph-squares-four"></i></span>
+                        All Product
+                        <span class="badge">12</span>
+                    </li>
+                    <li>
+                        <span class="cat-icon"><i class="ph ph-house"></i></span>
+                        For Home
+                    </li>
+                    <li>
+                        <span class="cat-icon"><i class="ph ph-music-notes"></i></span>
+                        For Music
+                    </li>
+                    <li>
+                        <span class="cat-icon"><i class="ph ph-device-mobile"></i></span>
+                        For Phone
+                    </li>
+                    <li>
+                        <span class="cat-icon"><i class="ph ph-briefcase"></i></span>
+                        For Storage
+                    </li>
+                </ul>
+                <div class="divider"></div>
+                <ul class="filter-list">
+                    <li>New Arrival</li>
+                    <li>Best Seller</li>
+                    <li>On Discount</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Product Grid -->
+        <section class="products-section">
+            <div class="product-grid" id="productGrid">
+                <!-- Products will be rendered here by JS -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="page-btn prev"><i class="ph ph-caret-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <span class="page-dots">...</span>
+                <button class="page-btn">10</button>
+                <button class="page-btn next"><i class="ph ph-caret-right"></i></button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Recommendations -->
+    <section class="container recommendations">
+        <h2>Explore our recomendations</h2>
+        <div class="recommendation-grid" id="recommendationGrid">
+            <!-- Recommendations rendered here -->
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="container cta-section">
+        <div class="cta-banner">
+            <div class="cta-content">
+                <h2>Ready to Get Our New Stuff?</h2>
+                <p>Use Stuffus for smart EV charging solution and enjoy your comfort from your car.</p>
+                <div class="email-signup">
+                    <input type="email" placeholder="Email Address">
+                    <button>Send</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-col">
+                <div class="logo">
+                     <span class="brand-name">Stuffus</span>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>About</h4>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Meet The Team</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Return</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Social</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="ph ph-x-logo"></i></a>
+                    <a href="#"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="#"><i class="ph ph-linkedin-logo"></i></a>
+                    <a href="#"><i class="ph ph-instagram-logo"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2023 Uangkua. All Rights Reserved.</p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
