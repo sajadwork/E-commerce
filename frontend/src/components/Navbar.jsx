@@ -23,7 +23,7 @@ const Navbar = () => {
                 <div className="container navbar-content">
                     <div className="logo">
                         <div className="logo-icon"></div>
-                        <span className="brand-name">Stuffus</span>
+                        <span className="brand-name">E-commerce</span>
                     </div>
                     <ul className="nav-links">
                         <li><Link to="/" className={isActive('/')}>Beranda</Link></li>

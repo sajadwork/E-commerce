@@ -12,7 +12,7 @@ const Settings = () => {
                     <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Store Name</label>
-                            <input defaultValue="Stuffus Store" style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #d1d5db' }} />
+                            <input defaultValue="E-commerce Store" style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #d1d5db' }} />
                         </div>
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Contact Email</label>

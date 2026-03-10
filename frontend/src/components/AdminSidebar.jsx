@@ -14,7 +14,7 @@ const AdminSidebar = () => {
     return (
         <aside className="admin-sidebar" style={{ width: '250px', backgroundColor: '#1f2937', color: 'white', minHeight: '100vh', padding: '20px', display: 'flex', flexDirection: 'column' }}>
             <div className="admin-brand" style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '30px' }}>
-                Stuffus Admin
+                E-commerce Admin
             </div>
 
             <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>

@@ -1,14 +1,37 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { getDashboardStats } from '../../services/admin.service';
 
 const Dashboard = () => {
-    // Demo Statistics
+    const { user } = useAuth();
+    const [statsData, setStatsData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const data = await getDashboardStats(user.token);
+                setStatsData(data);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+        fetchStats();
+    }, [user.token]);
+
+    if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading dashboard data...</div>;
+    if (error) return <div style={{ padding: '40px', color: 'red' }}>Error: {error}</div>;
+
+    // Map dynamic data to UI structure
     const stats = [
-        { label: "Total Sales", value: "$12,450", icon: "currency-dollar-simple", color: "green" },
-        { label: "Total Orders", value: "345", icon: "shopping-cart", color: "blue" },
-        { label: "New Users", value: "56", icon: "users", color: "orange" },
-        { label: "Pending Reviews", value: "12", icon: "star", color: "purple" }
+        { label: "Total Sales", value: `$${statsData?.totalSales?.toFixed(2) || '0.00'}`, icon: "currency-dollar-simple", color: "green" },
+        { label: "Total Orders", value: statsData?.orders || 0, icon: "shopping-cart", color: "blue" },
+        { label: "Total Users", value: statsData?.users || 0, icon: "users", color: "orange" },
+        { label: "Total Products", value: statsData?.products || 0, icon: "package", color: "purple" }
     ];
 
     return (

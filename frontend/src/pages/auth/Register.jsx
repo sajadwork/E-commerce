@@ -27,7 +27,7 @@ const Register = () => {
         <div className="auth-container">
             <div className="auth-card">
                 <h2>Create Account</h2>
-                <p>Join Stuffus for smart shopping.</p>
+                <p>Join E-commerce for smart shopping.</p>
                 {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
 
                 <form className="auth-form" onSubmit={handleSubmit}>

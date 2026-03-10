@@ -34,7 +34,7 @@ const Home = () => {
                 <div className="container hero-content">
                     <h1 className="hero-title">Give All You Need</h1>
                     <div className="hero-search">
-                        <input type="text" placeholder="Search on Stuffus" />
+                        <input type="text" placeholder="Search on E-commerce" />
                         <button className="search-btn">Search</button>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="cta-text-right">
-                        <p>Use Stuffus for smart EV charging solution and enjoy your comfort from your car.</p>
+                        <p>Use E-commerce for smart EV charging solution and enjoy your comfort from your car.</p>
                     </div>
                 </div>
             </section>
