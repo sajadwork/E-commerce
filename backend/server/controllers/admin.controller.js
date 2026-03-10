@@ -57,19 +57,30 @@ export const updateOrderToDelivered = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-    const product = new Product({
-        name: 'Sample name',
-        price: 0,
-        user: req.user._id,
-        image: '/images/sample.jpg',
-        brand: 'Sample brand',
-        category: 'Sample category',
-        countInStock: 0,
-        numReviews: 0,
-        description: 'Sample description',
-    });
-    const createdProduct = await product.save();
-    res.status(201).json(createdProduct);
+    console.log("CREATE PRODUCT REQUEST BODY:", req.body);
+    const { name, price, description, image, brand, category, countInStock } = req.body;
+
+    try {
+        const product = new Product({
+            name: name || 'Sample name',
+            price: price || 0,
+            user: req.user._id,
+            image: image || '/images/sample.jpg',
+            brand: brand || 'Sample brand',
+            category: category || 'Sample category',
+            countInStock: countInStock || 0,
+            numReviews: 0,
+            rating: 0,
+            description: description || 'Sample description',
+        });
+        const createdProduct = await product.save();
+        console.log("SAVED PRODUCT:", createdProduct);
+        res.status(201).json(createdProduct);
+    } catch (error) {
+        console.error("ERROR SAVING PRODUCT:", error);
+        res.status(400);
+        throw error;
+    }
 };
 
 export const updateProduct = async (req, res) => {
