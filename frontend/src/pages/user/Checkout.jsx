@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { formatPrice } from '../../utils/formatPrice';
+import { createOrder } from '../../services/order.service';
 
 const Checkout = () => {
     const { cartItems, getCartTotal, clearCart } = useCart();
@@ -16,18 +17,63 @@ const Checkout = () => {
         address: '',
         city: '',
         zip: '',
+        country: '',
         card: ''
     });
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock order placement
-        if (!directBuyItem) {
-            clearCart();
+        
+        if (!user) {
+            setError("You must be logged in to place an order.");
+            return;
         }
-        navigate('/order-success');
+
+        setIsPlacingOrder(true);
+        setError(null);
+        
+        try {
+            const orderItems = itemsToCheckout.map(item => ({
+                name: item.product.name,
+                qty: item.quantity,
+                image: item.product.image,
+                price: item.product.price,
+                product: item.product.id // backend expects product reference ID
+            }));
+
+            const subtotal = directBuyItem ? (directBuyItem.product.price * directBuyItem.quantity) : getCartTotal();
+            const shipping = 10;
+            const tax = 0; // Simplified for demo
+            
+            const orderData = {
+                orderItems,
+                shippingAddress: {
+                    address: form.address,
+                    city: form.city,
+                    postalCode: form.zip,
+                    country: form.country || 'USA' // Default if not provided
+                },
+                paymentMethod: 'Credit Card',
+                itemsPrice: subtotal,
+                taxPrice: tax,
+                shippingPrice: shipping,
+                totalPrice: subtotal + shipping + tax
+            };
+
+            await createOrder(orderData);
+            if (!directBuyItem) {
+                clearCart();
+            }
+            navigate('/order-success');
+        } catch (err) {
+            setError(err.message || 'Failed to place order.');
+        } finally {
+            setIsPlacingOrder(false);
+        }
     };
 
     if (itemsToCheckout.length === 0) {
@@ -40,6 +86,7 @@ const Checkout = () => {
         <div className="container" style={{ padding: '40px 20px', display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
             <div style={{ flex: '1', minWidth: '300px' }}>
                 <h2>Checkout</h2>
+                {error && <div style={{ padding: '10px', backgroundColor: '#fee2e2', color: '#ef4444', borderRadius: '4px', marginBottom: '15px' }}>{error}</div>}
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
                     <div>
                         <label>Shipping Address</label>
@@ -54,13 +101,30 @@ const Checkout = () => {
                             <label>Zip Code</label>
                             <input name="zip" value={form.zip} onChange={handleChange} required style={{ width: '100%', padding: '10px' }} />
                         </div>
+                        <div style={{ flex: '1' }}>
+                            <label>Country</label>
+                            <input name="country" value={form.country} onChange={handleChange} required style={{ width: '100%', padding: '10px' }} />
+                        </div>
                     </div>
                     <div>
                         <label>Card Number</label>
                         <input name="card" value={form.card} onChange={handleChange} placeholder="**** **** **** ****" required style={{ width: '100%', padding: '10px' }} />
                     </div>
-                    <button type="submit" style={{ padding: '15px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
-                        Place Order ({formatPrice(total + 10)})
+                    <button 
+                        type="submit" 
+                        disabled={isPlacingOrder}
+                        style={{ 
+                            padding: '15px', 
+                            backgroundColor: '#3b82f6', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '4px', 
+                            fontWeight: 'bold', 
+                            cursor: isPlacingOrder ? 'not-allowed' : 'pointer', 
+                            marginTop: '10px',
+                            opacity: isPlacingOrder ? 0.7 : 1
+                        }}>
+                        {isPlacingOrder ? 'Processing...' : `Place Order (${formatPrice(total + 10)})`}
                     </button>
                 </form>
             </div>

@@ -65,3 +65,63 @@ export const updateOrderToDelivered = async (orderId, token) => {
     if (!response.ok) throw new Error(data.message || 'Failed to update order');
     return data;
 };
+
+export const updateProduct = async (productId, productData, token) => {
+    const response = await fetch(`/api/admin/products/${productId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(productData)
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to update product');
+
+    return data;
+};
+
+export const deleteProduct = async (productId, token) => {
+    const response = await fetch(`/api/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to delete product');
+
+    return data;
+};
+
+export const getAllReviews = async (token) => {
+    const res = await fetch('/api/admin/reviews', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!res.ok) throw new Error('Failed to fetch reviews');
+    return res.json();
+};
+
+export const deleteReview = async (id, token) => {
+    const res = await fetch(`/api/admin/reviews/${id}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!res.ok) throw new Error('Failed to delete review');
+    return res.json();
+};
+
+export const deleteUser = async (id, token) => {
+    const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!res.ok) throw new Error('Failed to delete user');
+    return res.json();
+};

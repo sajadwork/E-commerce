@@ -8,35 +8,43 @@ const Orders = () => {
     const { user } = useAuth();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchOrders = async () => {
-            const data = await getUserOrders(user?.id);
-            setOrders(data);
-            setLoading(false);
+            try {
+                const data = await getUserOrders();
+                setOrders(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
         };
         if (user) fetchOrders();
+        else setLoading(false);
     }, [user]);
 
     if (!user) return <div style={{ padding: '40px', textAlign: 'center' }}>Please login to view orders.</div>;
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading orders...</div>;
+    if (error) return <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>{error}</div>;
 
     return (
-        <div className="container" style={{ padding: '40px 20px' }}>
+        <div className="container" style={{ padding: '40px 20px', minHeight: '60vh' }}>
             <h2>My Orders</h2>
             {orders.length === 0 ? (
-                <p>You have no pending orders.</p>
+                <p style={{ marginTop: '20px' }}>You have no pending orders.</p>
             ) : (
                 <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {orders.map(order => (
-                        <div key={order.id} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={order._id} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff' }}>
                             <div>
-                                <h3>Order {order.id}</h3>
-                                <p style={{ color: '#6b7280' }}>Placed on {order.date}</p>
-                                <p style={{ fontWeight: 'bold', marginTop: '10px' }}>Total: {formatPrice(order.total)} ({order.items} Items)</p>
+                                <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>Order ...{order._id.substring(order._id.length - 6)}</h3>
+                                <p style={{ color: '#6b7280', fontSize: '14px' }}>Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+                                <p style={{ fontWeight: 'bold', marginTop: '10px' }}>Total: {formatPrice(order.totalPrice)} ({order.orderItems?.length || 0} Items)</p>
                             </div>
                             <div>
-                                <OrderStatus status={order.status} />
+                                <OrderStatus status={order.isDelivered ? 'Delivered' : 'Processing'} />
                             </div>
                         </div>
                     ))}

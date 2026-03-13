@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useAuth } from '../../context/AuthContext';
-import { getUsers } from '../../services/admin.service';
+import { getUsers, deleteUser } from '../../services/admin.service';
 
 const Users = () => {
     const { user } = useAuth();
@@ -9,19 +9,32 @@ const Users = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const fetchUsers = async () => {
+        try {
+            const data = await getUsers(user.token);
+            setUsers(data);
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const data = await getUsers(user.token);
-                setUsers(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
         fetchUsers();
     }, [user.token]);
+
+    const handleSuspend = async (userId) => {
+        if (window.confirm('Are you sure you want to suspend/delete this user? This action cannot be undone.')) {
+            try {
+                await deleteUser(userId, user.token);
+                // Refresh list
+                fetchUsers();
+            } catch (err) {
+                alert(err.message || 'Failed to suspend user');
+            }
+        }
+    };
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
@@ -58,7 +71,14 @@ const Users = () => {
                                         </td>
                                         <td style={{ padding: '12px', color: '#6b7280' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
                                         <td style={{ padding: '12px' }}>
-                                            <button style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>Suspend</button>
+                                            <button 
+                                                onClick={() => handleSuspend(u._id)}
+                                                style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', opacity: u.isAdmin ? 0.5 : 1 }}
+                                                disabled={u.isAdmin}
+                                                title={u.isAdmin ? 'Cannot suspend an admin' : 'Suspend this user'}
+                                            >
+                                                Suspend
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}

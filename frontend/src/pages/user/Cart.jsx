@@ -26,8 +26,8 @@ const Cart = () => {
     }
 
     return (
-        <div className="container cart-page" style={{ padding: '40px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <div className="container cart-page" style={{ padding: '0px 20px 40px 20px' }}>
+            <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '40px', paddingBottom: '30px', borderBottom: '1px solid #eee', marginBottom: '30px' }}>
                 <h1 className="page-title" style={{ margin: 0 }}>Shopping Cart ({cartItems.length})</h1>
                 <button onClick={clearCart} style={{ color: '#ef4444', backgroundColor: 'transparent', border: '1px solid #ef4444', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>Clear Cart</button>
             </div>
@@ -41,7 +41,7 @@ const Cart = () => {
                 </div>
 
                 {/* Order Summary */}
-                <div className="cart-summary" style={{ flex: '1', minWidth: '300px', backgroundColor: '#f9fafb', padding: '30px', borderRadius: '8px', height: 'fit-content' }}>
+                <div className="cart-summary" style={{ position: 'sticky', top: '120px', flex: '1', minWidth: '300px', backgroundColor: '#f9fafb', padding: '30px', borderRadius: '8px', height: 'fit-content' }}>
                     <h2 style={{ marginBottom: '20px', fontSize: '20px' }}>Order Summary</h2>
                     <div className="summary-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                         <span>Subtotal</span>

@@ -12,7 +12,7 @@ const AdminSidebar = () => {
     };
 
     return (
-        <aside className="admin-sidebar" style={{ width: '250px', backgroundColor: '#1f2937', color: 'white', minHeight: '100vh', padding: '20px', display: 'flex', flexDirection: 'column' }}>
+        <aside className="admin-sidebar" style={{ width: '250px', backgroundColor: '#1f2937', color: 'white', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column' }}>
             <div className="admin-brand" style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '30px' }}>
                 E-commerce Admin
             </div>

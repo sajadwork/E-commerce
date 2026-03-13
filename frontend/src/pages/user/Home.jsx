@@ -1,11 +1,39 @@
 
-import React, { useState, useRef } from 'react';
-import { PRODUCTS, CATEGORIES } from '../../utils/constants';
+import React, { useState, useEffect, useRef } from 'react';
+import { CATEGORIES } from '../../utils/constants';
 import ProductCard from '../../components/ProductCard';
+import { getProducts } from '../../services/product.service';
 
 const Home = () => {
     const [activeCategory, setActiveCategory] = useState("All Product");
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(window.innerWidth <= 480 ? 8 : 9);
     const recRef = useRef(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setItemsPerPage(window.innerWidth <= 480 ? 8 : 9);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const data = await getProducts();
+                setProducts(data);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     const scrollRec = (direction) => {
         if (recRef.current) {
@@ -77,27 +105,56 @@ const Home = () => {
 
                 {/* Product Grid */}
                 <section className="products-section">
-                    <div className="product-grid">
-                        {PRODUCTS.map(product => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                renderStars={renderStars}
-                                onAddToCart={handleAddToCart}
-                            />
-                        ))}
-                    </div>
+                    {loading && <div style={{ padding: '40px', textAlign: 'center' }}>Loading products...</div>}
+                    {error && <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>{error}</div>}
+
+                    {!loading && !error && (
+                        <div className="product-grid">
+                            {products
+                                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                .map(product => (
+                                <ProductCard
+                                    key={product._id}
+                                    product={{ ...product, id: product._id }} // map _id to id for the existing ProductCard
+                                    renderStars={renderStars}
+                                    onAddToCart={handleAddToCart}
+                                />
+                            ))}
+                        </div>
+                    )}
 
                     {/* Pagination */}
-                    <div className="pagination">
-                        <button className="page-btn prev"><i className="ph ph-caret-left"></i></button>
-                        <button className="page-btn active">1</button>
-                        <button className="page-btn">2</button>
-                        <button className="page-btn">3</button>
-                        <span className="page-dots">...</span>
-                        <button className="page-btn">10</button>
-                        <button className="page-btn next"><i className="ph ph-caret-right"></i></button>
-                    </div>
+                    {!loading && !error && products.length > itemsPerPage && (
+                        <div className="pagination">
+                            <button 
+                                className="page-btn prev"
+                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                disabled={currentPage === 1}
+                                style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                            >
+                                <i className="ph ph-caret-left"></i>
+                            </button>
+                            
+                            {[...Array(Math.ceil(products.length / itemsPerPage))].map((_, index) => (
+                                <button
+                                    key={index + 1}
+                                    className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+
+                            <button 
+                                className="page-btn next"
+                                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(products.length / itemsPerPage), prev + 1))}
+                                disabled={currentPage === Math.ceil(products.length / itemsPerPage)}
+                                style={{ opacity: currentPage === Math.ceil(products.length / itemsPerPage) ? 0.5 : 1, cursor: currentPage === Math.ceil(products.length / itemsPerPage) ? 'not-allowed' : 'pointer' }}
+                            >
+                                <i className="ph ph-caret-right"></i>
+                            </button>
+                        </div>
+                    )}
                 </section>
 
             </main>
@@ -112,16 +169,20 @@ const Home = () => {
                     </div>
                 </div>
                 <div className="recommendation-track-container" ref={recRef}>
-                    <div className="recommendation-grid">
-                        {PRODUCTS.slice(0, 4).map(product => (
-                            <ProductCard
-                                key={`rec-${product.id}`}
-                                product={product}
-                                renderStars={renderStars}
-                                onAddToCart={handleAddToCart}
-                            />
-                        ))}
-                    </div>
+                    {loading ? (
+                        <div style={{ padding: '20px', textAlign: 'center' }}>Loading recommendations...</div>
+                    ) : (
+                        <div className="recommendation-grid">
+                            {products.slice(0, 4).map(product => (
+                                <ProductCard
+                                    key={`rec-${product._id}`}
+                                    product={{ ...product, id: product._id }}
+                                    renderStars={renderStars}
+                                    onAddToCart={handleAddToCart}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
