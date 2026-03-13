@@ -4,7 +4,8 @@ import { admin } from '../middleware/admin.middleware.js';
 import {
     getDashboardStats, getUsers, deleteUser,
     getOrders, updateOrderToDelivered,
-    createProduct, updateProduct, deleteProduct
+    createProduct, updateProduct, deleteProduct,
+    getAllReviews, deleteReview
 } from '../controllers/admin.controller.js';
 
 const router = express.Router();
@@ -19,5 +20,7 @@ router.route('/orders').get(getOrders);
 router.route('/orders/:id/deliver').put(updateOrderToDelivered);
 router.route('/products').post(createProduct);
 router.route('/products/:id').put(updateProduct).delete(deleteProduct);
+router.route('/reviews').get(getAllReviews);
+router.route('/reviews/:id').delete(deleteReview);
 
 export default router;

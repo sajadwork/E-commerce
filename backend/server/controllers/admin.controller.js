@@ -1,6 +1,7 @@
 import User from '../models/User.model.js';
 import Order from '../models/Order.model.js';
 import Product from '../models/Product.model.js';
+import Review from '../models/Review.model.js';
 
 export const getDashboardStats = async (req, res) => {
     const usersCount = await User.countDocuments();
@@ -111,5 +112,32 @@ export const deleteProduct = async (req, res) => {
     } else {
         res.status(404);
         throw new Error('Product not found');
+    }
+};
+
+export const getAllReviews = async (req, res) => {
+    const reviews = await Review.find({}).populate('user', 'id name').populate('product', 'id name');
+    res.json(reviews);
+};
+
+export const deleteReview = async (req, res) => {
+    const review = await Review.findById(req.params.id);
+    if (review) {
+        // Find product to recalculate rating
+        const product = await Product.findById(review.product);
+
+        await Review.deleteOne({ _id: review._id });
+
+        if (product) {
+            const reviews = await Review.find({ product: product._id });
+            product.numReviews = reviews.length;
+            product.rating = reviews.length > 0 ? reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length : 0;
+            await product.save();
+        }
+
+        res.json({ message: 'Review removed' });
+    } else {
+        res.status(404);
+        throw new Error('Review not found');
     }
 };
