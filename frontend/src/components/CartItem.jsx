@@ -1,10 +1,13 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { formatPrice } from '../utils/formatPrice';
+import { useSettings } from '../context/SettingsContext';
+import { useFormatPrice } from '../hooks/useFormatPrice';
 import { useCart } from '../context/CartContext';
 
 const CartItem = ({ item }) => {
     const { removeFromCart, updateQuantity } = useCart();
+    const formatPrice = useFormatPrice();
     const { product, quantity } = item;
 
     return (
@@ -20,12 +23,23 @@ const CartItem = ({ item }) => {
                 <div className="cart-item-price">{formatPrice(product.price)}</div>
             </div>
             <div className="cart-item-actions">
-                <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(product.id, quantity - 1)} disabled={quantity <= 1}>-</button>
-                    <span>{quantity}</span>
-                    <button onClick={() => updateQuantity(product.id, quantity + 1)}>+</button>
+                <div className="qty-controls">
+                    <button 
+                        className="qty-btn"
+                        onClick={() => updateQuantity(product.id, quantity - 1)} 
+                        disabled={quantity <= 1}
+                    >
+                        <i className="ph ph-minus"></i>
+                    </button>
+                    <span className="qty-value">{quantity}</span>
+                    <button 
+                        className="qty-btn"
+                        onClick={() => updateQuantity(product.id, quantity + 1)}
+                    >
+                        <i className="ph ph-plus"></i>
+                    </button>
                 </div>
-                <button className="remove-btn" onClick={() => removeFromCart(product.id)}>
+                <button className="remove-btn" onClick={() => removeFromCart(product.id)} title="Remove item">
                     <i className="ph ph-trash"></i>
                 </button>
             </div>
@@ -34,3 +48,4 @@ const CartItem = ({ item }) => {
 };
 
 export default CartItem;
+

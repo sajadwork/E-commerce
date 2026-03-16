@@ -12,34 +12,36 @@ const AdminSidebar = () => {
     };
 
     return (
-        <aside className="admin-sidebar" style={{ width: '250px', backgroundColor: '#1f2937', color: 'white', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column' }}>
-            <div className="admin-brand" style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '30px' }}>
-                E-commerce Admin
+        <aside className="dashboard-sidebar">
+            <div className="admin-brand" style={{ padding: '0 16px', marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary-color)' }}>Admin Portal</h2>
             </div>
 
-            <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <NavLink to="/admin/dashboard" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-squares-four" style={{ marginRight: '8px' }}></i> Dashboard
-                </NavLink>
-                <NavLink to="/admin/products" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-package" style={{ marginRight: '8px' }}></i> Products
-                </NavLink>
-                <NavLink to="/admin/orders" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-shopping-cart" style={{ marginRight: '8px' }}></i> Orders
-                </NavLink>
-                <NavLink to="/admin/users" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-users" style={{ marginRight: '8px' }}></i> Users
-                </NavLink>
-                <NavLink to="/admin/reviews" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-star" style={{ marginRight: '8px' }}></i> Reviews
-                </NavLink>
-                <NavLink to="/admin/settings" style={({ isActive }) => ({ padding: '10px', borderRadius: '4px', color: 'white', textDecoration: 'none', backgroundColor: isActive ? '#374151' : 'transparent' })}>
-                    <i className="ph ph-gear" style={{ marginRight: '8px' }}></i> Settings
-                </NavLink>
-            </nav>
+            <NavLink to="/admin/dashboard" className="sidebar-link">
+                <i className="ph ph-squares-four"></i> Dashboard
+            </NavLink>
+            <NavLink to="/admin/products" className="sidebar-link">
+                <i className="ph ph-package"></i> Products
+            </NavLink>
+            <NavLink to="/admin/orders" className="sidebar-link">
+                <i className="ph ph-shopping-cart"></i> Orders
+            </NavLink>
+            <NavLink to="/admin/users" className="sidebar-link">
+                <i className="ph ph-users"></i> Users
+            </NavLink>
+            <NavLink to="/admin/reviews" className="sidebar-link">
+                <i className="ph ph-star"></i> Reviews
+            </NavLink>
+            <NavLink to="/admin/settings" className="sidebar-link" style={{ marginBottom: 'auto' }}>
+                <i className="ph ph-gear"></i> Settings
+            </NavLink>
 
-            <button onClick={handleLogout} style={{ marginTop: 'auto', padding: '10px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                <i className="ph ph-sign-out" style={{ marginRight: '8px' }}></i> Logout
+            <button 
+                onClick={handleLogout} 
+                className="sidebar-link" 
+                style={{ border: 'none', background: 'none', width: '100%', cursor: 'pointer', textAlign: 'left', color: '#ef4444' }}
+            >
+                <i className="ph ph-sign-out"></i> Logout
             </button>
         </aside>
     );

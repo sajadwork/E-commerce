@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdminSidebar from '../../../components/AdminSidebar';
 import OrderStatus from '../../../components/OrderStatus';
-import { formatPrice } from '../../../utils/formatPrice';
 import { useAuth } from '../../../context/AuthContext';
+import { useFormatPrice } from '../../../hooks/useFormatPrice';
 import { getOrders } from '../../../services/admin.service';
 
 const OrderList = () => {
     const { user } = useAuth();
+    const formatPrice = useFormatPrice();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,59 +28,92 @@ const OrderList = () => {
     }, [user.token]);
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
-            <AdminSidebar />
-            <div style={{ flex: 1, padding: '30px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Orders</h1>
+        <div className="admin-page">
+            <div className="container">
+                <div className="dashboard-container">
+                    <AdminSidebar />
+                    
+                    <main className="dashboard-main">
+                        <header className="admin-header-actions">
+                            <div>
+                                <h1 className="page-title" style={{ marginBottom: '4px' }}>Orders</h1>
+                                <p style={{ color: 'var(--text-light)' }}>Track and manage all customer purchases.</p>
+                            </div>
+                        </header>
 
-                <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                    {loading && <div style={{ padding: '20px' }}>Loading orders...</div>}
-                    {error && <div style={{ padding: '20px', color: 'red' }}>{error}</div>}
+                        {error && <div className="error-message" style={{ marginBottom: '24px' }}>{error}</div>}
 
-                    {!loading && !error && (
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ borderBottom: '2px solid #e5e7eb', textAlign: 'left' }}>
-                                    <th style={{ padding: '12px' }}>Order ID</th>
-                                    <th style={{ padding: '12px' }}>Customer</th>
-                                    <th style={{ padding: '12px' }}>Date</th>
-                                    <th style={{ padding: '12px' }}>Total</th>
-                                    <th style={{ padding: '12px' }}>Paid</th>
-                                    <th style={{ padding: '12px' }}>Delivered</th>
-                                    <th style={{ padding: '12px' }}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map(order => (
-                                    <tr key={order._id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                        <td style={{ padding: '12px', fontWeight: '500' }}>...{order._id.substring(order._id.length - 6)}</td>
-                                        <td style={{ padding: '12px' }}>{order.user && order.user.name ? order.user.name : 'Unknown User'}</td>
-                                        <td style={{ padding: '12px', color: '#6b7280' }}>
-                                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
-                                        </td>
-                                        <td style={{ padding: '12px' }}>{formatPrice(order.totalPrice)}</td>
-                                        <td style={{ padding: '12px' }}>
-                                            {order.isPaid ? (
-                                                <span style={{ color: 'green' }}>{new Date(order.paidAt).toLocaleDateString()}</span>
-                                            ) : (
-                                                <span style={{ color: 'red' }}>Not Paid</span>
-                                            )}
-                                        </td>
-                                        <td style={{ padding: '12px' }}>
-                                            {order.isDelivered ? (
-                                                <span style={{ color: 'green' }}>{new Date(order.deliveredAt).toLocaleDateString()}</span>
-                                            ) : (
-                                                <span style={{ color: 'red' }}>Not Delivered</span>
-                                            )}
-                                        </td>
-                                        <td style={{ padding: '12px' }}>
-                                            <Link to={`/admin/orders/${order._id}`} style={{ color: '#3b82f6', textDecoration: 'none' }}>View</Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                        <div className="admin-table-container">
+                            {loading ? (
+                                <div style={{ padding: '60px', textAlign: 'center' }}>
+                                    <div className="loading-spinner" style={{ margin: '0 auto 16px' }}></div>
+                                    <p style={{ color: 'var(--text-light)' }}>Loading orders...</p>
+                                </div>
+                            ) : orders.length > 0 ? (
+                                <table className="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Payment</th>
+                                            <th>Delivery</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {orders.map(order => (
+                                            <tr key={order._id}>
+                                                <td>
+                                                    <div style={{ fontWeight: '700', color: 'var(--primary-color)' }}>
+                                                        {order._id ? `#${order._id.substring(order._id.length - 6)}` : 'N/A'}
+                                                    </div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>
+                                                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style={{ fontWeight: '600' }}>{order.user?.name || 'Guest'}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{order.user?.email || 'No email provided'}</div>
+                                                </td>
+                                                <td style={{ fontWeight: '800', color: 'var(--accent-color)' }}>
+                                                    {formatPrice(order.totalPrice)}
+                                                </td>
+                                                <td>
+                                                    <span className="order-status-badge" style={{ 
+                                                        backgroundColor: order.isPaid ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                                        color: order.isPaid ? '#16a34a' : '#dc2626'
+                                                    }}>
+                                                        <i className={`ph ${order.isPaid ? 'ph-check-circle' : 'ph-x-circle'}`}></i>
+                                                        {order.isPaid ? 'Paid' : 'Unpaid'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className="order-status-badge" style={{ 
+                                                        backgroundColor: order.isDelivered ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                                                        color: order.isDelivered ? '#16a34a' : '#d97706'
+                                                    }}>
+                                                        <i className={`ph ${order.isDelivered ? 'ph-truck' : 'ph-clock'}`}></i>
+                                                        {order.isDelivered ? 'Shipped' : 'Pending'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <Link to={`/admin/orders/${order._id}`} className="btn-action-edit" style={{ marginRight: 0 }}>
+                                                        <i className="ph ph-eye"></i> Details
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div style={{ padding: '80px 20px', textAlign: 'center', color: 'var(--text-light)' }}>
+                                    <i className="ph ph-shopping-bag" style={{ fontSize: '3rem', marginBottom: '16px', display: 'block' }}></i>
+                                    <p>No orders have been placed yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </main>
                 </div>
             </div>
         </div>

@@ -37,54 +37,93 @@ const Users = () => {
     };
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
-            <AdminSidebar />
-            <div style={{ flex: 1, padding: '30px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Users</h1>
+        <div className="admin-page">
+            <div className="container">
+                <div className="dashboard-container">
+                    <AdminSidebar />
+                    
+                    <main className="dashboard-main">
+                        <header className="admin-header-actions">
+                            <div>
+                                <h1 className="page-title" style={{ marginBottom: '4px' }}>Users</h1>
+                                <p style={{ color: 'var(--text-light)' }}>Manage system users and their permission levels.</p>
+                            </div>
+                        </header>
 
-                <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                    {loading && <div style={{ padding: '20px' }}>Loading users...</div>}
-                    {error && <div style={{ padding: '20px', color: 'red' }}>{error}</div>}
+                        {error && <div className="error-message" style={{ marginBottom: '24px' }}>{error}</div>}
 
-                    {!loading && !error && (
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ borderBottom: '2px solid #e5e7eb', textAlign: 'left' }}>
-                                    <th style={{ padding: '12px' }}>ID</th>
-                                    <th style={{ padding: '12px' }}>Name</th>
-                                    <th style={{ padding: '12px' }}>Email</th>
-                                    <th style={{ padding: '12px' }}>Role</th>
-                                    <th style={{ padding: '12px' }}>Joined</th>
-                                    <th style={{ padding: '12px' }}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map(u => (
-                                    <tr key={u._id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                        <td style={{ padding: '12px' }}>...{u._id.substring(u._id.length - 6)}</td>
-                                        <td style={{ padding: '12px', fontWeight: '500' }}>{u.name}</td>
-                                        <td style={{ padding: '12px', color: '#6b7280' }}>{u.email}</td>
-                                        <td style={{ padding: '12px' }}>
-                                            <span style={{ padding: '4px 8px', borderRadius: '4px', backgroundColor: u.isAdmin ? '#dbeafe' : '#f3f4f6', color: u.isAdmin ? '#1d4ed8' : '#374151', fontSize: '14px' }}>
-                                                {u.isAdmin ? 'Admin' : 'User'}
-                                            </span>
-                                        </td>
-                                        <td style={{ padding: '12px', color: '#6b7280' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
-                                        <td style={{ padding: '12px' }}>
-                                            <button 
-                                                onClick={() => handleSuspend(u._id)}
-                                                style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', opacity: u.isAdmin ? 0.5 : 1 }}
-                                                disabled={u.isAdmin}
-                                                title={u.isAdmin ? 'Cannot suspend an admin' : 'Suspend this user'}
-                                            >
-                                                Suspend
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                        <div className="admin-table-container">
+                            {loading ? (
+                                <div style={{ padding: '60px', textAlign: 'center' }}>
+                                    <div className="loading-spinner" style={{ margin: '0 auto 16px' }}></div>
+                                    <p style={{ color: 'var(--text-light)' }}>Loading users...</p>
+                                </div>
+                            ) : users.length > 0 ? (
+                                <table className="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Role</th>
+                                            <th>Joined</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users.map(u => (
+                                            <tr key={u._id}>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                        <div className="profile-avatar-large" style={{ width: '40px', height: '40px', fontSize: '1rem' }}>
+                                                            {(u.name || 'U').charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: '700', color: 'var(--primary-color)' }}>{u.name || 'Unnamed User'}</div>
+                                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{u.email || 'No email'}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className="order-status-badge" style={{ 
+                                                        backgroundColor: u.isAdmin ? 'rgba(59, 130, 246, 0.1)' : 'rgba(107, 114, 128, 0.1)',
+                                                        color: u.isAdmin ? '#2563eb' : '#4b5563'
+                                                    }}>
+                                                        <i className={`ph ${u.isAdmin ? 'ph-shield-check' : 'ph-user'}`}></i>
+                                                        {u.isAdmin ? 'Administrator' : 'Customer'}
+                                                    </span>
+                                                </td>
+                                                <td style={{ color: 'var(--text-light)' }}>
+                                                    {new Date(u.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td>
+                                                    <span style={{ color: '#16a34a', fontWeight: '600', fontSize: '0.85rem' }}>
+                                                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', marginRight: '6px' }}></span>
+                                                        Active
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {!u.isAdmin && (
+                                                        <button 
+                                                            onClick={() => handleSuspend(u._id)}
+                                                            className="btn-action-delete"
+                                                            title="Suspend user"
+                                                        >
+                                                            <i className="ph ph-user-minus"></i>
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div style={{ padding: '80px 20px', textAlign: 'center', color: 'var(--text-light)' }}>
+                                    <i className="ph ph-users" style={{ fontSize: '3rem', marginBottom: '16px', display: 'block' }}></i>
+                                    <p>No registered users found.</p>
+                                </div>
+                            )}
+                        </div>
+                    </main>
                 </div>
             </div>
         </div>

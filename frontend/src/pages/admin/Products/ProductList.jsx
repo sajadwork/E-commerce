@@ -40,64 +40,82 @@ const ProductList = () => {
     };
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f3f4f6' }}>
-            <AdminSidebar />
-            <div style={{ flex: 1 }}>
+        <div className="admin-page">
+            <div className="container">
+                <div className="dashboard-container">
+                    <AdminSidebar />
+                    
+                    <main className="dashboard-main">
+                        <header className="admin-header-actions">
+                            <div>
+                                <h1 className="page-title" style={{ marginBottom: '4px' }}>Products</h1>
+                                <p style={{ color: 'var(--text-light)' }}>Manage your store's inventory and details.</p>
+                            </div>
+                            <Link to="/admin/products/add" className="btn-add-new">
+                                <i className="ph ph-plus"></i> Add Product
+                            </Link>
+                        </header>
 
-                {/* Sticky Header Section */}
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    position: 'sticky',
-                    top: 0,
-                    backgroundColor: '#f3f4f6',
-                    padding: '30px',
-                    zIndex: 10,
-                    borderBottom: '1px solid #e5e7eb' // subtle separation line when scrolling
-                }}>
-                    <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Products</h1>
-                    <Link to="/admin/products/add" style={{ padding: '10px 15px', backgroundColor: '#10b981', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-                        + Add Product
-                    </Link>
-                </div>
+                        {error && <div className="error-message" style={{ marginBottom: '24px' }}>{error}</div>}
 
-                {/* Main Content Area */}
-                <div style={{ padding: '0 30px 30px 30px' }}>
-                    <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                        {loading && <div style={{ padding: '20px' }}>Loading products...</div>}
-                        {error && <div style={{ padding: '20px', color: 'red' }}>{error}</div>}
-
-                        {!loading && !error && (
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '2px solid #e5e7eb', textAlign: 'left' }}>
-                                        <th style={{ padding: '12px' }}>ID</th>
-                                        <th style={{ padding: '12px' }}>Image</th>
-                                        <th style={{ padding: '12px' }}>Name</th>
-                                        <th style={{ padding: '12px' }}>Category</th>
-                                        <th style={{ padding: '12px' }}>Price</th>
-                                        <th style={{ padding: '12px' }}>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {products.map(product => (
-                                        <tr key={product._id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                            <td style={{ padding: '12px' }}>...{product._id.substring(product._id.length - 6)}</td>
-                                            <td style={{ padding: '12px' }}><img src={product.image} alt={product.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} /></td>
-                                            <td style={{ padding: '12px', fontWeight: '500' }}>{product.name}</td>
-                                            <td style={{ padding: '12px' }}>{product.category}</td>
-                                            <td style={{ padding: '12px' }}>${product.price}</td>
-                                            <td style={{ padding: '12px' }}>
-                                                <Link to={`/admin/products/edit/${product._id}`} style={{ marginRight: '10px', color: '#3b82f6', textDecoration: 'none' }}>Edit</Link>
-                                                <button onClick={() => handleDelete(product._id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>Delete</button>
-                                            </td>
+                        <div className="admin-table-container">
+                            {loading ? (
+                                <div style={{ padding: '60px', textAlign: 'center' }}>
+                                    <div className="loading-spinner" style={{ margin: '0 auto 16px' }}></div>
+                                    <p style={{ color: 'var(--text-light)' }}>Loading products...</p>
+                                </div>
+                            ) : products.length > 0 ? (
+                                <table className="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
+                                    </thead>
+                                    <tbody>
+                                        {products.map(product => (
+                                            <tr key={product._id}>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                        <img src={product.image || '/placeholder-product.png'} alt={product.name || 'Product'} />
+                                                        <div>
+                                                            <div style={{ fontWeight: '700', color: 'var(--primary-color)' }}>{product.name || 'Unnamed Product'}</div>
+                                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>
+                                                                ID: #{product._id ? product._id.substring(product._id.length - 6) : 'N/A'}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className="role-badge" style={{ backgroundColor: 'rgba(0,0,0,0.05)', color: 'var(--text-color)' }}>
+                                                        {product.category || 'Uncategorized'}
+                                                    </span>
+                                                </td>
+                                                <td style={{ fontWeight: '800', color: 'var(--accent-color)' }}>
+                                                    ${Number(product.price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                </td>
+                                                <td>
+                                                    <Link to={`/admin/products/edit/${product._id}`} className="btn-action-edit">
+                                                        <i className="ph ph-pencil-simple"></i> Edit
+                                                    </Link>
+                                                    <button onClick={() => handleDelete(product._id)} className="btn-action-delete">
+                                                        <i className="ph ph-trash"></i> Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div style={{ padding: '80px 20px', textAlign: 'center', color: 'var(--text-light)' }}>
+                                    <i className="ph ph-package" style={{ fontSize: '3rem', marginBottom: '16px', display: 'block' }}></i>
+                                    <p>No products found in your inventory.</p>
+                                </div>
+                            )}
+                        </div>
+                    </main>
                 </div>
             </div>
         </div>

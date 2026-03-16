@@ -2,11 +2,13 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useFormatPrice } from '../hooks/useFormatPrice';
 
 const ProductCard = ({ product, renderStars }) => {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist } = useWishlist();
   const navigate = useNavigate();
+  const formatPrice = useFormatPrice();
   return (
     <article className="product-card">
       <div className="product-image">
@@ -34,7 +36,7 @@ const ProductCard = ({ product, renderStars }) => {
         </div>
       </Link>
       <div className="product-footer">
-        <span className="price">${product.price}</span>
+        <span className="price">{formatPrice(product.price)}</span>
         <div className="product-actions">
           <button
             className="btn-add"

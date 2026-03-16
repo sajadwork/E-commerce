@@ -1,22 +1,36 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AppRoutes from './routes';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSettings } from '../context/SettingsContext';
+import { useAuth } from '../context/AuthContext';
 
 function App() {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { settings } = useSettings();
+    const { user, logout } = useAuth();
+
+    // Maintenance Mode Guard
+    useEffect(() => {
+        if (settings.maintenanceMode && user && !user.isAdmin) {
+            logout();
+            navigate('/login');
+        }
+    }, [settings.maintenanceMode, user, logout, navigate]);
+
     const isAdminRoute = location.pathname.startsWith('/admin');
+    const isAuthRoute = ['/login', '/register', '/forgot-password'].includes(location.pathname);
     const isProfileRoute = ['/profile', '/orders', '/wishlist', '/notifications', '/cart'].includes(location.pathname);
     
-    // On profile screens, we hide the heavy top-nav and footer, 
-    // but the Navbar component itself contains the Mobile Bottom Nav, which we ALWAYS want.
-    const showFooter = !isAdminRoute && !isProfileRoute;
+    // Hide specialized layout on admin and auth pages
+    const showNavbar = !isAdminRoute && !isAuthRoute;
+    const showFooter = !isAdminRoute && !isAuthRoute && !isProfileRoute;
 
     return (
         <>
-            {!isAdminRoute && <Navbar hideDesktop={isProfileRoute} />}
+            {showNavbar && <Navbar hideDesktop={isProfileRoute} />}
 
             {/* Route Content */}
             <AppRoutes />

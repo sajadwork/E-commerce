@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
-import { formatPrice } from '../../utils/formatPrice';
+import { useFormatPrice } from '../../hooks/useFormatPrice';
 
 const Wishlist = () => {
+    const formatPrice = useFormatPrice();
     const { wishlistItems, removeFromWishlist } = useWishlist();
     const { addToCart } = useCart();
 

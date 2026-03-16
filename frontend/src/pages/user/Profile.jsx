@@ -1,48 +1,86 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { NavLink } from 'react-router-dom';
 
 const Profile = () => {
     const { user, logout } = useAuth();
 
-    if (!user) return <div style={{ padding: '40px', textAlign: 'center' }}>Please login to view profile.</div>;
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    if (!user) {
+        return (
+            <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+                <p>Please login to view profile.</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="container" style={{ padding: '40px 20px', minHeight: '60vh' }}>
-            <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'white', padding: '30px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '1px solid #e5e7eb', paddingBottom: '20px', marginBottom: '20px' }}>
-                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#3b82f6', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '32px', fontWeight: 'bold' }}>
-                        {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                        <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '5px' }}>{user.name}</h1>
-                        <p style={{ color: '#6b7280' }}>{user.email}</p>
-                        <span style={{ display: 'inline-block', marginTop: '10px', padding: '4px 8px', backgroundColor: '#e0e7ff', color: '#4f46e5', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>
-                            {user.role.toUpperCase()}
-                        </span>
-                    </div>
-                </div>
+        <div className="profile-page">
+            <div className="container">
+                <div className="dashboard-container">
+                    <aside className="dashboard-sidebar">
+                        <NavLink to="/profile" className="sidebar-link active">
+                            <i className="ph ph-user"></i> My Profile
+                        </NavLink>
+                        <NavLink to="/profile/orders" className="sidebar-link">
+                            <i className="ph ph-package"></i> My Orders
+                        </NavLink>
+                        <NavLink to="/profile/wishlist" className="sidebar-link">
+                            <i className="ph ph-heart"></i> Wishlist
+                        </NavLink>
+                        <NavLink to="/profile/settings" className="sidebar-link">
+                            <i className="ph ph-gear"></i> Settings
+                        </NavLink>
+                        <button 
+                            onClick={logout} 
+                            className="sidebar-link" 
+                            style={{ border: 'none', background: 'none', width: '100%', cursor: 'pointer', textAlign: 'left', marginTop: 'auto', color: '#ef4444' }}
+                        >
+                            <i className="ph ph-sign-out"></i> Logout
+                        </button>
+                    </aside>
 
-                <div style={{ marginBottom: '30px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' }}>Account Details</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: '#6b7280' }}>Phone</span>
-                            <span>+1 234 567 890</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: '#6b7280' }}>Address</span>
-                            <span>123 Mockingbird Lane, Seattle, WA</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: '#6b7280' }}>Member Since</span>
-                            <span>March 2026</span>
-                        </div>
-                    </div>
-                </div>
+                    <main className="dashboard-main">
+                        <div className="profile-card">
+                            <div className="profile-header">
+                                <div className="profile-avatar-large">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="profile-info">
+                                    <h1>{user.name}</h1>
+                                    <p style={{ margin: '0 0 12px' }}>{user.email}</p>
+                                    <span className="role-badge">{user.role}</span>
+                                </div>
+                            </div>
 
-                <div style={{ display: 'flex', gap: '15px' }}>
-                    <button style={{ flex: 1, padding: '12px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Edit Profile</button>
-                    <button onClick={logout} style={{ flex: 1, padding: '12px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Logout</button>
+                            <section style={{ marginBottom: '40px' }}>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '24px' }}>Account Details</h3>
+                                <div style={{ display: 'grid', gap: '20px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
+                                        <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Phone</span>
+                                        <span style={{ fontWeight: '700' }}>+1 234 567 890</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
+                                        <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Member Since</span>
+                                        <span style={{ fontWeight: '700' }}>March 2026</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
+                                        <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Shipping Address</span>
+                                        <span style={{ fontWeight: '700', textAlign: 'right' }}>123 Modern Loft, Tech City, TC</span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <button className="btn-buy-now-large" style={{ flex: 1 }}>Edit Profile</button>
+                                <button className="btn-add-cart-large" style={{ flex: 1 }} onClick={logout}>Sign Out</button>
+                            </div>
+                        </div>
+                    </main>
                 </div>
             </div>
         </div>
@@ -50,3 +88,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

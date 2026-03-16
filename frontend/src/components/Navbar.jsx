@@ -1,16 +1,27 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 
 const Navbar = ({ hideDesktop = false }) => {
+    const { settings } = useSettings();
     const location = useLocation();
     const navigate = useNavigate();
     const { cartItems } = useCart();
     const { wishlistItems } = useWishlist();
     const { user, logout } = useAuth();
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const cartCount = cartItems.length;
     const wishlistCount = wishlistItems.length;
@@ -27,33 +38,38 @@ const Navbar = ({ hideDesktop = false }) => {
     return (
         <>
             {/* Desktop/Tablet Top Navbar */}
-            <nav className="navbar" style={hideDesktop ? { display: 'none' } : {}}>
+            <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} style={hideDesktop ? { display: 'none' } : {}}>
                 <div className="container navbar-content">
-                    <div className="logo">
+                    <Link to="/" className="logo">
                         <div className="logo-icon"></div>
-                        <span className="brand-name">E-commerce</span>
-                    </div>
+                        <span className="brand-name">{settings.storeName}</span>
+                    </Link>
+                    
                     <ul className="nav-links">
                         <li><Link to="/" className={isActive('/')}>Beranda</Link></li>
                         <li><Link to="/shop" className={isActive('/shop')}>Shop</Link></li>
                         <li><Link to="/blog" className={isActive('/blog')}>Blog</Link></li>
                     </ul>
+
                     <div className="nav-icons">
-                        <button className="icon-btn"><i className="ph ph-magnifying-glass"></i></button>
+                        <button className="icon-btn" aria-label="Search">
+                            <i className="ph ph-magnifying-glass"></i>
+                        </button>
+                        
                         <div className="cart-container">
-                            <Link to="/cart" className="icon-btn">
+                            <Link to="/cart" className="icon-btn" aria-label="Cart">
                                 <i className="ph ph-shopping-cart"></i>
+                                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                             </Link>
-                            <span className="cart-badge">{cartCount}</span>
                         </div>
+
                         {user ? (
                             <div className="user-dropdown-container">
                                 <div className="profile-trigger">
-                                    <div className="user-avatar" style={{ border: 'none', background: 'transparent', boxShadow: 'none', width: 'auto', height: 'auto', marginRight: '4px' }}>
-                                        <i className="ph ph-user" style={{ fontSize: '1.4rem' }}></i>
+                                    <div className="user-avatar">
+                                        <i className="ph ph-user"></i>
                                     </div>
-                                    <span style={{ fontSize: '1rem', color: '#111827' }}>E-commerce</span>
-                                    <i className="ph ph-caret-down" style={{ fontSize: '0.8rem', marginLeft: '2px', color: '#4b5563' }}></i>
+                                    <i className="ph ph-caret-down"></i>
                                 </div>
                                 
                                 <div className="user-dropdown-menu">
@@ -86,23 +102,16 @@ const Navbar = ({ hideDesktop = false }) => {
                                         </Link>
                                     )}
                                     
-                                    <button onClick={handleLogout} className="dropdown-item">
+                                    <button onClick={handleLogout} className="dropdown-item logout">
                                         <i className="ph ph-sign-out"></i>
                                         Logout
                                     </button>
                                 </div>
                             </div>
                         ) : (
-                            <div className="user-dropdown-container">
-                                <div className="profile-trigger">
-                                    <div className="user-avatar">
-                                        <Link to="/login" style={{ textDecoration: 'none' }}>
-                                            <div className="avatar-placeholder"><i className="ph ph-user"></i></div>
-                                        </Link>
-                                    </div>
-                                    <Link to="/login" style={{ textDecoration: 'none', color: 'inherit', fontWeight: '500' }}>Login</Link>
-                                </div>
-                            </div>
+                            <Link to="/login" className="icon-btn" aria-label="Login">
+                                <i className="ph ph-user"></i>
+                            </Link>
                         )}
                     </div>
                 </div>
@@ -131,3 +140,4 @@ const Navbar = ({ hideDesktop = false }) => {
 };
 
 export default Navbar;
+

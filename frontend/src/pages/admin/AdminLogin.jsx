@@ -32,7 +32,7 @@ const AdminLogin = () => {
                 <h2>Admin Portal</h2>
                 <p>Please log in to manage your store.</p>
 
-                {error && <div style={{ color: '#ef4444', marginBottom: '15px', padding: '10px', backgroundColor: '#fee2e2', borderRadius: '4px', fontSize: '14px' }}>{error}</div>}
+                {error && <div className="error-message">{error}</div>}
 
                 <form className="auth-form" onSubmit={handleLogin}>
                     <div className="form-group">

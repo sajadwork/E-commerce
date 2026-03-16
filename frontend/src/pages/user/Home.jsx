@@ -25,7 +25,9 @@ const Home = () => {
         const fetchProducts = async () => {
             try {
                 const data = await getProducts();
-                setProducts(data);
+                // Shuffle logic for "All Product" variety on refresh
+                const shuffled = [...data].sort(() => Math.random() - 0.5);
+                setProducts(shuffled);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -37,7 +39,9 @@ const Home = () => {
 
     const scrollRec = (direction) => {
         if (recRef.current) {
-            recRef.current.scrollBy({ left: direction * 300, behavior: 'smooth' });
+            const card = recRef.current.querySelector('.product-card');
+            const cardWidth = card ? card.offsetWidth + 24 : 324; // Width + gap
+            recRef.current.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
         }
     };
 
@@ -53,28 +57,54 @@ const Home = () => {
         window.dispatchEvent(new CustomEvent('addToCart'));
     };
 
+    // Filter products based on active category
+    const filteredProducts = activeCategory === "All Product" 
+        ? products 
+        : products.filter(p => activeCategory.toLowerCase().includes(p.category.toLowerCase()));
+
+    // Reset to first page when category changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeCategory]);
+
     return (
         <div className="home-page">
             {/* Hero Section */}
             <header className="hero">
                 <div className="hero-bg"></div>
-                <div className="hero-overlay-text">Shop</div>
+                <div className="hero-overlay-text">PREMIUM</div>
                 <div className="container hero-content">
-                    <h1 className="hero-title">Give All You Need</h1>
+                    <h1 className="hero-title">Experience the Future of Life</h1>
                     <div className="hero-search">
-                        <input type="text" placeholder="Search on E-commerce" />
-                        <button className="search-btn">Search</button>
+                        <input type="text" placeholder="Search for products..." aria-label="Search" />
+                        <button className="search-btn">Find Product</button>
                     </div>
                 </div>
             </header>
 
+            {/* Category Navigation for Mobile */}
+            <div className="container mobile-category-nav">
+                <ul className="category-scroll">
+                    {CATEGORIES.map(cat => (
+                        <li
+                            key={cat.name}
+                            className={activeCategory === cat.name ? 'active' : ''}
+                            onClick={() => setActiveCategory(cat.name)}
+                        >
+                            <i className={`ph ph-${cat.icon}`}></i>
+                            <span>{cat.name}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
             {/* Main Content */}
             <main className="container main-layout">
 
-                {/* Sidebar */}
+                {/* Sidebar (Desktop) */}
                 <aside className="sidebar">
                     <div className="category-card">
-                        <h3>Category</h3>
+                        <h3>Discover Category</h3>
                         <ul className="category-list">
                             {CATEGORIES.map(cat => (
                                 <li
@@ -83,12 +113,13 @@ const Home = () => {
                                     onClick={() => setActiveCategory(cat.name)}
                                 >
                                     <span className="cat-icon"><i className={`ph ph-${cat.icon}`}></i></span>
-                                    {cat.name}
+                                    <span className="cat-name">{cat.name}</span>
                                     {cat.count && <span className="badge">{cat.count}</span>}
                                 </li>
                             ))}
                         </ul>
                         <div className="divider"></div>
+                        <h3 style={{ marginTop: '24px', fontSize: '1rem', color: 'var(--text-color)', fontWeight: '600' }}>Filters</h3>
                         <ul className="filter-list">
                             {['New Arrival', 'Best Seller', 'On Discount'].map(filter => (
                                 <li key={filter}>
@@ -105,17 +136,28 @@ const Home = () => {
 
                 {/* Product Grid */}
                 <section className="products-section">
-                    {loading && <div style={{ padding: '40px', textAlign: 'center' }}>Loading products...</div>}
-                    {error && <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>{error}</div>}
+                    <div className="section-header">
+                        <h2>{activeCategory}</h2>
+                        <span className="results-count">{filteredProducts.length} Products Found</span>
+                    </div>
+
+                    {loading && (
+                        <div className="loading-state">
+                            <div className="loader"></div>
+                            <p>Discovering amazing products...</p>
+                        </div>
+                    )}
+                    
+                    {error && <div className="error-state">{error}</div>}
 
                     {!loading && !error && (
                         <div className="product-grid">
-                            {products
+                            {filteredProducts
                                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                 .map(product => (
                                 <ProductCard
                                     key={product._id}
-                                    product={{ ...product, id: product._id }} // map _id to id for the existing ProductCard
+                                    product={{ ...product, id: product._id }}
                                     renderStars={renderStars}
                                     onAddToCart={handleAddToCart}
                                 />
@@ -124,18 +166,17 @@ const Home = () => {
                     )}
 
                     {/* Pagination */}
-                    {!loading && !error && products.length > itemsPerPage && (
+                    {!loading && !error && filteredProducts.length > itemsPerPage && (
                         <div className="pagination">
                             <button 
                                 className="page-btn prev"
                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                 disabled={currentPage === 1}
-                                style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
                             >
                                 <i className="ph ph-caret-left"></i>
                             </button>
                             
-                            {[...Array(Math.ceil(products.length / itemsPerPage))].map((_, index) => (
+                            {[...Array(Math.ceil(filteredProducts.length / itemsPerPage))].map((_, index) => (
                                 <button
                                     key={index + 1}
                                     className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
@@ -147,9 +188,8 @@ const Home = () => {
 
                             <button 
                                 className="page-btn next"
-                                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(products.length / itemsPerPage), prev + 1))}
-                                disabled={currentPage === Math.ceil(products.length / itemsPerPage)}
-                                style={{ opacity: currentPage === Math.ceil(products.length / itemsPerPage) ? 0.5 : 1, cursor: currentPage === Math.ceil(products.length / itemsPerPage) ? 'not-allowed' : 'pointer' }}
+                                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredProducts.length / itemsPerPage), prev + 1))}
+                                disabled={currentPage === Math.ceil(filteredProducts.length / itemsPerPage)}
                             >
                                 <i className="ph ph-caret-right"></i>
                             </button>
@@ -162,18 +202,23 @@ const Home = () => {
             {/* Recommendations */}
             <section className="container recommendations">
                 <div className="rec-header">
-                    <h2>Explore our recommendations</h2>
-                    <div className="rec-controls">
-                        <button className="rec-btn prev-rec" onClick={() => scrollRec(-1)}><i className="ph ph-caret-left"></i></button>
-                        <button className="rec-btn next-rec" onClick={() => scrollRec(1)}><i className="ph ph-caret-right"></i></button>
+                    <div className="title-group">
+                        <span className="label">Handpicked</span>
+                        <h2>Recommended for You</h2>
                     </div>
+                    {!loading && products.length > 4 && (
+                        <div className="rec-controls">
+                            <button className="rec-btn prev-rec" onClick={() => scrollRec(-1)} aria-label="Previous"><i className="ph ph-caret-left"></i></button>
+                            <button className="rec-btn next-rec" onClick={() => scrollRec(1)} aria-label="Next"><i className="ph ph-caret-right"></i></button>
+                        </div>
+                    )}
                 </div>
                 <div className="recommendation-track-container" ref={recRef}>
                     {loading ? (
-                        <div style={{ padding: '20px', textAlign: 'center' }}>Loading recommendations...</div>
+                        <div className="loading-skeleton"></div>
                     ) : (
                         <div className="recommendation-grid">
-                            {products.slice(0, 4).map(product => (
+                            {products.slice(0, 10).map(product => (
                                 <ProductCard
                                     key={`rec-${product._id}`}
                                     product={{ ...product, id: product._id }}
@@ -190,14 +235,18 @@ const Home = () => {
             <section className="container cta-section">
                 <div className="cta-banner">
                     <div className="cta-content">
-                        <h2>Ready to Get Our New Stuff?</h2>
+                        <h2>Join Our Community</h2>
+                        <p>Subscribe to receive updates, access to exclusive deals, and more.</p>
                         <div className="email-signup">
-                            <input type="email" placeholder="Email Address" />
-                            <button>Send</button>
+                            <input type="email" placeholder="Your email address" aria-label="Email" />
+                            <button className="btn-primary">Subscribe Now</button>
                         </div>
                     </div>
-                    <div className="cta-text-right">
-                        <p>Use E-commerce for smart EV charging solution and enjoy your comfort from your car.</p>
+                    <div className="cta-visual">
+                        <div className="stat-card">
+                            <span className="count">50k+</span>
+                            <span className="label">Happy Customers</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -206,3 +255,4 @@ const Home = () => {
 };
 
 export default Home;
+

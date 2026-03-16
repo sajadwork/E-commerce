@@ -59,11 +59,31 @@ export const PRODUCTS = [
         reviews: 42,
         image: "/images/product_cleaner.png",
         tag: "Mini"
+    },
+    {
+        id: 7,
+        name: "Aura 2TB External NVMe SSD",
+        category: "Storage",
+        price: 249.00,
+        rating: 4.9,
+        reviews: 45,
+        image: "/images/product_aura_ssd.png",
+        tag: "Premium"
+    },
+    {
+        id: 8,
+        name: "Nexus 16TB Network Attached Storage",
+        category: "Storage",
+        price: 599.00,
+        rating: 4.8,
+        reviews: 28,
+        image: "/images/product_nexus_nas.png",
+        tag: "Pro"
     }
 ];
 
 export const CATEGORIES = [
-    { name: "All Product", icon: "squares-four", count: 12 },
+    { name: "All Product", icon: "squares-four", count: null },
     { name: "For Home", icon: "house", count: null },
     { name: "For Music", icon: "music-notes", count: null },
     { name: "For Phone", icon: "device-mobile", count: null },
