@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
 import { useFormatPrice } from '../../hooks/useFormatPrice';
 import { createOrder } from '../../services/order.service';
+import AddressForm from '../../components/AddressForm';
 
 const Checkout = () => {
     const { settings } = useSettings();
@@ -107,59 +108,43 @@ const Checkout = () => {
 
                 <div className="checkout-grid">
                     <div className="checkout-form-section">
-                        <div className="form-card">
-                            <h2>Shipping Information</h2>
+                        <div className="form-card" style={{ padding: 0, border: 'none', background: 'transparent' }}>
                             {error && <div className="error-state" style={{ padding: '12px', marginBottom: '24px' }}>{error}</div>}
                             
-                            <form onSubmit={handleSubmit} className="checkout-form">
+                            <AddressForm 
+                                onSave={(data) => {
+                                    setForm(prev => ({ 
+                                        ...prev, 
+                                        address: `${data.address}, ${data.locality}, ${data.landmark}`,
+                                        city: data.city,
+                                        zip: data.pincode,
+                                        country: 'India' // Assuming context based on states list
+                                    }));
+                                }}
+                                onCancel={() => navigate('/cart')}
+                            />
+
+                            <div className="form-card" style={{ marginTop: '24px' }}>
+                                <h2 style={{ margin: '0 0 24px' }}>Payment Details</h2>
                                 <div className="form-group">
-                                    <label>Street Address</label>
+                                    <label>Card Number</label>
                                     <input 
-                                        name="address" 
-                                        value={form.address} 
+                                        name="card" 
+                                        value={form.card} 
                                         onChange={handleChange} 
+                                        placeholder="**** **** **** ****" 
                                         required 
-                                        placeholder="123 Modern St."
                                     />
                                 </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>City</label>
-                                        <input name="city" value={form.city} onChange={handleChange} required placeholder="San Francisco" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Zip Code</label>
-                                        <input name="zip" value={form.zip} onChange={handleChange} required placeholder="94103" />
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <label>Country</label>
-                                    <input name="country" value={form.country} onChange={handleChange} required placeholder="United States" />
-                                </div>
-
-                                <div style={{ marginTop: '16px' }}>
-                                    <h2 style={{ margin: '0 0 24px' }}>Payment Details</h2>
-                                    <div className="form-group">
-                                        <label>Card Number</label>
-                                        <input 
-                                            name="card" 
-                                            value={form.card} 
-                                            onChange={handleChange} 
-                                            placeholder="**** **** **** ****" 
-                                            required 
-                                        />
-                                    </div>
-                                </div>
-
                                 <button 
-                                    type="submit" 
+                                    onClick={handleSubmit}
                                     disabled={isPlacingOrder}
                                     className="btn-buy-now-large"
                                     style={{ width: '100%', marginTop: '16px' }}
                                 >
                                     {isPlacingOrder ? 'Processing Order...' : `Complete Order — ${formatPrice(total + 10)}`}
                                 </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
 

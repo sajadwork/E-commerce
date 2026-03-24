@@ -1,10 +1,12 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { CATEGORIES } from '../../utils/constants';
 import ProductCard from '../../components/ProductCard';
 import { getProducts } from '../../services/product.service';
+import { useNavigate } from 'react-router-dom';
+import SearchBar from '../../components/SearchBar';
 
 const Home = () => {
+    const navigate = useNavigate();
     const [activeCategory, setActiveCategory] = useState("All Product");
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -67,6 +69,7 @@ const Home = () => {
         setCurrentPage(1);
     }, [activeCategory]);
 
+
     return (
         <div className="home-page">
             {/* Hero Section */}
@@ -75,12 +78,12 @@ const Home = () => {
                 <div className="hero-overlay-text">PREMIUM</div>
                 <div className="container hero-content">
                     <h1 className="hero-title">Experience the Future of Life</h1>
-                    <div className="hero-search">
-                        <input type="text" placeholder="Search for products..." aria-label="Search" />
-                        <button className="search-btn">Find Product</button>
-                    </div>
+                    <form className="hero-search">
+                        <SearchBar />
+                    </form>
                 </div>
             </header>
+
 
             {/* Category Navigation for Mobile */}
             <div className="container mobile-category-nav">

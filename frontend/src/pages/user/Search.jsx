@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getProducts, searchProducts } from '../../services/product.service';
 import ProductCard from '../../components/ProductCard';
 
 const Search = () => {
-    const [query, setQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [query, setQuery] = useState(searchParams.get('q') || '');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchInitial = async () => {
+        const fetchResults = async () => {
+            const q = searchParams.get('q');
             setLoading(true);
-            const data = await getProducts();
-            setResults(data);
-            setLoading(false);
+            try {
+                if (q) {
+                    const data = await searchProducts(q);
+                    setResults(data);
+                    setQuery(q);
+                } else {
+                    const data = await getProducts();
+                    setResults(data);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
-        fetchInitial();
-    }, []);
+        fetchResults();
+    }, [searchParams]);
 
-    const handleSearch = async (e) => {
+    const handleSearch = (e) => {
         e.preventDefault();
-        setLoading(true);
-        const data = await searchProducts(query);
-        setResults(data);
-        setLoading(false);
+        if (query.trim()) {
+            setSearchParams({ q: query });
+        } else {
+            setSearchParams({});
+        }
     };
 
     return (

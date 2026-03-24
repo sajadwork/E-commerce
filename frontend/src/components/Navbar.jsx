@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import SearchBar from './SearchBar';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -52,10 +53,8 @@ const Navbar = ({ hideDesktop = false }) => {
                     </ul>
 
                     <div className="nav-icons">
-                        <button className="icon-btn" aria-label="Search">
-                            <i className="ph ph-magnifying-glass"></i>
-                        </button>
-                        
+                        <SearchBar />
+
                         <div className="cart-container">
                             <Link to="/cart" className="icon-btn" aria-label="Cart">
                                 <i className="ph ph-shopping-cart"></i>

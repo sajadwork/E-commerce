@@ -19,6 +19,7 @@ import OrderSuccess from '../pages/user/OrderSuccess';
 import Orders from '../pages/user/Orders';
 import Wishlist from '../pages/user/Wishlist';
 import Profile from '../pages/user/Profile';
+import Addresses from '../pages/user/Addresses';
 
 // Admin Pages
 import AdminLogin from '../pages/admin/AdminLogin';
@@ -54,6 +55,7 @@ const AppRoutes = () => {
             <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
             <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/profile/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
 
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />

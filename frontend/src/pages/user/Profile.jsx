@@ -1,10 +1,11 @@
-
 import React, { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import UserSidebar from '../../components/UserSidebar';
 
 const Profile = () => {
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -22,27 +23,7 @@ const Profile = () => {
         <div className="profile-page">
             <div className="container">
                 <div className="dashboard-container">
-                    <aside className="dashboard-sidebar">
-                        <NavLink to="/profile" className="sidebar-link active">
-                            <i className="ph ph-user"></i> My Profile
-                        </NavLink>
-                        <NavLink to="/profile/orders" className="sidebar-link">
-                            <i className="ph ph-package"></i> My Orders
-                        </NavLink>
-                        <NavLink to="/profile/wishlist" className="sidebar-link">
-                            <i className="ph ph-heart"></i> Wishlist
-                        </NavLink>
-                        <NavLink to="/profile/settings" className="sidebar-link">
-                            <i className="ph ph-gear"></i> Settings
-                        </NavLink>
-                        <button 
-                            onClick={logout} 
-                            className="sidebar-link" 
-                            style={{ border: 'none', background: 'none', width: '100%', cursor: 'pointer', textAlign: 'left', marginTop: 'auto', color: '#ef4444' }}
-                        >
-                            <i className="ph ph-sign-out"></i> Logout
-                        </button>
-                    </aside>
+                    <UserSidebar />
 
                     <main className="dashboard-main">
                         <div className="profile-card">
@@ -62,21 +43,21 @@ const Profile = () => {
                                 <div style={{ display: 'grid', gap: '20px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
                                         <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Phone</span>
-                                        <span style={{ fontWeight: '700' }}>+1 234 567 890</span>
+                                        <span style={{ fontWeight: '700' }}>+91 9876543210</span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
                                         <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Member Since</span>
                                         <span style={{ fontWeight: '700' }}>March 2026</span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px', background: 'var(--light-gray)', borderRadius: 'var(--radius-lg)' }}>
-                                        <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Shipping Address</span>
-                                        <span style={{ fontWeight: '700', textAlign: 'right' }}>123 Modern Loft, Tech City, TC</span>
+                                        <span style={{ color: 'var(--text-light)', fontWeight: '600' }}>Primary Address</span>
+                                        <span style={{ fontWeight: '700', textAlign: 'right' }}>123 Modern Loft, Kolkata, WB</span>
                                     </div>
                                 </div>
                             </section>
 
                             <div style={{ display: 'flex', gap: '16px' }}>
-                                <button className="btn-buy-now-large" style={{ flex: 1 }}>Edit Profile</button>
+                                <button className="btn-buy-now-large" style={{ flex: 1 }} onClick={() => navigate('/profile/addresses')}>Manage Addresses</button>
                                 <button className="btn-add-cart-large" style={{ flex: 1 }} onClick={logout}>Sign Out</button>
                             </div>
                         </div>

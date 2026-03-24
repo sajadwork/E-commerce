@@ -22,10 +22,10 @@ function App() {
 
     const isAdminRoute = location.pathname.startsWith('/admin');
     const isAuthRoute = ['/login', '/register', '/forgot-password'].includes(location.pathname);
-    const isProfileRoute = ['/profile', '/orders', '/wishlist', '/notifications', '/cart'].includes(location.pathname);
+    const isProfileRoute = ['/profile', '/orders', '/wishlist', '/notifications', '/cart', '/profile/addresses'].includes(location.pathname);
     
-    // Hide specialized layout on admin and auth pages
-    const showNavbar = !isAdminRoute && !isAuthRoute;
+    // Hide specialized layout on admin, auth, and specific profile pages
+    const showNavbar = !isAdminRoute && !isAuthRoute && location.pathname !== '/profile/addresses';
     const showFooter = !isAdminRoute && !isAuthRoute && !isProfileRoute;
 
     return (
